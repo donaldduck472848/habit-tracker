@@ -53,6 +53,18 @@ def cmd_check(args):
     sys.exit(1)
 
 
+def cmd_rename(args):
+    habits = load()
+    for h in habits:
+        if h["id"] == args.id:
+            h["name"] = args.name
+            save(habits)
+            print("Renamed to:", args.name)
+            return
+    print("No habit with id", args.id, file=sys.stderr)
+    sys.exit(1)
+
+
 def main():
     p = argparse.ArgumentParser(prog="habit")
     sub = p.add_subparsers(dest="cmd", required=True)
@@ -64,6 +76,10 @@ def main():
     c = sub.add_parser("check")
     c.add_argument("id", type=int)
     c.set_defaults(fn=cmd_check)
+    r = sub.add_parser("rename")
+    r.add_argument("id", type=int)
+    r.add_argument("name")
+    r.set_defaults(fn=cmd_rename)
     args = p.parse_args()
     args.fn(args)
 
